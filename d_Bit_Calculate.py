@@ -40,10 +40,13 @@ class bit_neuralnetwork:
         error_value = 0
         for i in range(4):
             input = np.reshape(self.input_dataset[i-1], (self.input_nodenum,1))
+                # input_dataset이 그냥 tf.constant 배열이기 떄문에, numpy의 배열로 변환하는 작업.
             self.answer = self.answer_dataset[i-1]
             self.output_node = self.act_func(tf.matmul(self.weight, input, True))
+                # 계산시 weight * layer이고, weight가 transpose 되어있어야 계산이 되므로 transpose값을 true로 지정
             error = self.answer - self.output_node
             self.weight = tf.add_n([self.weight, input * self.learning_rate * error])
+                # 이젠 이렇게 써줘야 더해지더라...
             error_value += error
         return error_value/4
 
@@ -66,7 +69,7 @@ if __name__ == "__main__":
     input_nonbias = tf.constant([[0.0,0.0], [0.0,1.0], [1.0,0.0], [1.0,1.0]])
     input_bias = tf.constant([[0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]])
     output = tf.constant([0.0, 1.0, 1.0, 0.0])  #여기 정답만 수정해서 AND, OR, XOR 다 실험 가능
-    test = bit_neuralnetwork(input_bias, output, 0.01, reLU, True)
+    test = bit_neuralnetwork(input_bias, output, 0.01, neuron.sigmoid, True)
     test.training()
     test.test()
     """
@@ -85,7 +88,7 @@ if __name__ == "__main__":
                 1,1     0.6         1,1     0.98        1,1     1.33        1,1     1.25        1,1     0.6         1,1     0.5
                 
         * (p)라고 표시되어있는 것들은 정확하게 그 값이 나왔다는 것을 의미함
-        * XOR은 전체적으로 잘 구분하지 못하는 모습을 보임. 단층 신경망의 한계인듯
+        * XOR은 전체적으로 잘 구분하지 못하는 모습을 보임. 단층 신경망의 한계인듯 (XOR Problem)
         * 나머지는 편향을 넣었을 때, 보통 잘 판별하며, sigmoid(0) = 0.5, reLU(0) = 0 의 특성 때문에 (p)들이 나온 것이라 생각됨
     """
 
