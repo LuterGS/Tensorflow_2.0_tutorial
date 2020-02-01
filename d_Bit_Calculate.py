@@ -21,9 +21,6 @@ def reLU(x):
 
 class and_func:
     def __init__(self, input_dataset, answer_dataset, learning_rate, act_func, Bias=False):
-        """
-        input_dataset은 [4,2], answer_dataset은 [4,1]을 가정
-        """
         if Bias==True:
             self.weight = tf.random.normal([3, 1], 0, 1)
             self.input_nodenum = 3
