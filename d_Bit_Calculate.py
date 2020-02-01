@@ -5,21 +5,22 @@ import b_Neuron as neuron
 """
 Trune는 당연히 1, False는 당연히 0인건 모두가 아는 사실이잖아?
 
-And 연산을 한다 생각했을때, Supervised Learning이라 생각하면
-Input   Answer
-0,0     0
-0,1     1
-1,0     1
-1,1     1
+Supervised Learning이라 생각하면
+AND 연산              OR 연산               XOR 연산
+Input   Answer      Input   Answer      Input   Answer      
+0,0     0           0,0     0           0,0     0
+0,1     0           0,1     1           0,1     1
+1,0     0           1,0     1           1,0     1
+1,1     1           1,1     1           1,1     0
 인 데이터셋을 트레이닝시킨다고 보면 되겠네.
 
 그럼 입력-출력계층만 설계하면
-input_node가 2개, output_node가 1개일테니... 한번 세워볼까?
+input_node가 2개, output_node가 1개일테니... 한번 세워볼까? (bias인 경우에는 좀 다르게)
 """
 def reLU(x):
     return max(0, x)
 
-class and_func:
+class bit_neuralnetwork:
     def __init__(self, input_dataset, answer_dataset, learning_rate, act_func, Bias=False):
         if Bias==True:
             self.weight = tf.random.normal([3, 1], 0, 1)
@@ -51,7 +52,7 @@ class and_func:
         for i in range(2000):
             error = self.train_onestep()
             if i % 100 == 99:
-                print(self.answer, error)
+                print(i, error)
 
     def test(self):
         for i in range(4):
@@ -64,16 +65,27 @@ class and_func:
 if __name__ == "__main__":
     input_nonbias = tf.constant([[0.0,0.0], [0.0,1.0], [1.0,0.0], [1.0,1.0]])
     input_bias = tf.constant([[0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]])
-    output = tf.constant([0.0,1.0,1.0,1.0])
-    test = and_func(input_bias, output, 0.01, neuron.sigmoid, True)
+    output = tf.constant([0.0, 1.0, 1.0, 0.0])  #여기 정답만 수정해서 AND, OR, XOR 다 실험 가능
+    test = bit_neuralnetwork(input_bias, output, 0.01, reLU, True)
     test.training()
     test.test()
     """
-    reLU, no Bias : [1,1] → 1.3 ,  [1,0],[0,1] → 0.6 ,  [0,0] → 0      사실상 0.6*2정도
-    sigmoid, no Bias : [1,1] → 1 ,  [1,0],[0,1] → 1 ,  [0,0] → 0.5 (정확히 이값으로)
-        ㄴ 0,0인 경우는 트레이닝이 안되는것때문에 0.0 트레이닝 결과값이 저럼. Bias를 넣고 시도
-    reLU, with Bias : [1,1] → 1.25 ,  [1,0],[0,1] → 0.75 ,  [0,0] → 0.25
-    sigmoid, with Bias : [1,1] → 1 ,  [1,0],[0,1] → 1 ,  [0,0] → 0.2
-        ㄴ 신기하게 sigmoid일 때 편향을 넣었을때 더 잘 먹음. 함수 특성인가?
+    Result
+                AND 연산             AND 연산 (Bias)     OR 연산              OR 연산 (Bias)       XOR 연산             XOR 연산 (Bias)
+                Input   Output      Input   Output      Input   Output      Input   Output      Input   Output      Input   Output 
+                     
+    Sigmoid     0,0     0.5(p)      0,0     0.0         0,0     0.5(p)      0,0     0.21        0,0     0.5(p)      0,0     0.5
+                0,1     0.5         0,1     0.16        0,1     0.95        0,1     0.91        0,1     0.49        0,1     0.5
+                1,0     0.5         1,0     0.17        1,0     0.95        1,0     0.92        1,0     0.5         1,0     0.5
+                1,1     0.5         1,1     0.75        1,1     1           1,1     1           1,1     0.5         1,1     0.49
+                
+    reLU        0,0     0(p)        0,0     0(p)        0,0     0(p)        0,0     0.25        0,0     0(p)        0,0     0.51
+                0,1     0.3         0,1     0.01        0,1     0.66        0,1     0.75        0,1     0.33        0,1     0.51
+                1,0     0.3         1,0     0.01        1,0     0.66        1,0     0.75        1,0     0.33        1,0     0.5
+                1,1     0.6         1,1     0.98        1,1     1.33        1,1     1.25        1,1     0.6         1,1     0.5
+                
+        * (p)라고 표시되어있는 것들은 정확하게 그 값이 나왔다는 것을 의미함
+        * XOR은 전체적으로 잘 구분하지 못하는 모습을 보임. 단층 신경망의 한계인듯
+        * 나머지는 편향을 넣었을 때, 보통 잘 판별하며, sigmoid(0) = 0.5, reLU(0) = 0 의 특성 때문에 (p)들이 나온 것이라 생각됨
     """
 
