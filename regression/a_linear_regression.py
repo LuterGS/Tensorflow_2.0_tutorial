@@ -58,14 +58,18 @@ def linear_regression(data):
     최소제곱법 공식을 적용한다.
     """
 
-    line_x = np.arange(min(data[0]), max(data[0]), 0.01)
+    line_x = np.arange(min(x), max(y), 0.01)
     line_y = a * line_x + b
     """
     x, y를 지정해줘야 하는데, x를 풍속의 최소 - 최대값으로 잡아준다. 
     """
 
-    plt.plot(line_x, line_y, 'r-')
-    plt.plot(data[0], data[1], 'bo')
+    return line_x, line_y
+
+def show_graph(X, Y, x, y):
+    #X,Y는 선형회귀선, x, y는 데이터셋
+    plt.plot(x, y, 'bo')
+    plt.plot(X, Y, 'r-')
     plt.xlabel("Wind speed")
     plt.ylabel("Atmospheric Pressure")
     plt.show()
@@ -81,4 +85,5 @@ if __name__ == "__main__":
     plt.ylabel("Atmospheric Pressure")
     plt.show()
 
-    linear_regression(data)
+    a, b = linear_regression(data)
+    show_graph(data[0], data[1], a, b)

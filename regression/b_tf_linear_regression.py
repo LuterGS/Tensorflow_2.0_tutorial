@@ -18,32 +18,45 @@ class machine_learn_regression:
         loss = tf.reduce_mean((self.Y_data - y_predicted) ** 2)
         return loss
 
-    def training(self):
+    def set_varlist(self):
+        return [self.a, self.b]
+
+    def training(self, training_cycle, estimate_error):
 
         print(self.X_data, self.Y_data)
-        for i in range(100000):
+        for i in range(training_cycle):
             # 잔차의 제곱의 평균을 최소하 (minimize)
-            self.optimizer.minimize(self.compute_loss, var_list=[self.a, self.b])
+            self.optimizer.minimize(self.compute_loss, var_list=self.set_varlist())
 
             if i % 100 == 99:
                 print(i, 'a:', self.a.numpy(), 'b:', self.b.numpy(), 'loss:', self.compute_loss().numpy())
 
+                if self.compute_loss().numpy() < estimate_error:
+                    print("total training cycle : ", i)
+                    break
+
+    def return_value(self):
         line_x = np.arange(min(self.X_data), max(self.X_data), 0.1)
         line_y = self.a * line_x + self.b
 
+        print("line_x : ", line_x)
+        print("line_y : ", line_y)
         return line_x, line_y
+
 
 def show_graph(line_x, line_y, x, y):
     plt.plot(line_x, line_y, 'r-')
     plt.plot(x, y, 'bo')
     plt.show()
 
+
 if __name__ == "__main__":
 
     data = linear_regression.get_weather_data()
 
     test = machine_learn_regression(data[0], data[1])
-    x, y = test.training()
+    test.training(100000, 16)
+    x, y = test.return_value()
     show_graph(x, y, data[0], data[1])
     """
     텐서플로우 함수를 이용한 선형회귀, 10만번 트레이닝, 학습률 0.1로 맞춤으로써 시작시 99만 loss를 보였던 것을 15까지 줄였음
