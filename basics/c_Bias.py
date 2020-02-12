@@ -1,4 +1,4 @@
-import b_Neuron as NN
+from basics import b_Neuron as NN
 import tensorflow as tf
 
 """

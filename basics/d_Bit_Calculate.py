@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import b_Neuron as neuron
+from basics import b_Neuron as neuron
 
 """
 Trune는 당연히 1, False는 당연히 0인건 모두가 아는 사실이잖아?
