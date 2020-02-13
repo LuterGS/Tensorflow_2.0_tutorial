@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/data/김포공항_풍속_기압.csv" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/data/서울시 기상관측.csv" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
