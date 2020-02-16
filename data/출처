@@ -1,3 +1,14 @@
 LeagueofLegends.csv - Kaggle (https://www.kaggle.com/chuckephron/leagueoflegends)
 김포공항_풍속_기압.csv - 기상자료개방포털 (기상청) (https://data.kma.go.kr/cmmn/main.do)
 서울시_기상관측.csv - 기상자료개방포털 (기상청) (https://data.kma.go.kr/cmmn/main.do)
+
+
+
+
+-- Not Available in git but available in offline --
+
+/data/cat 밑의 고양이 사진들
+/data/dog 밑의 개 사진들
+출처 : Kaggle, Natural Images - https://www.kaggle.com/prasunroy/natural-images
+파일의 cat, dog 폴더 안의 사진들임.
+
