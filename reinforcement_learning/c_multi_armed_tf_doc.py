@@ -1,22 +1,22 @@
 import abc
 import numpy as np
 import tensorflow as tf
+import scipy.special
 
-#from tf_agents.agents import tf_agent
-#from tf_agents.drivers import driver
+from tf_agents.agents import tf_agent
+from tf_agents.drivers import driver
 from tf_agents.environments import py_environment
-#from tf_agents.environments import tf_environment
-#from tf_agents.environments import tf_py_environment
-#from tf_agents.policies import tf_policy
+from tf_agents.environments import tf_environment
+from tf_agents.environments import tf_py_environment
+from tf_agents.policies import tf_policy
 from tf_agents.specs import array_spec
-#from tf_agents.specs import tensor_spec
+from tf_agents.specs import tensor_spec
 from tf_agents.trajectories import time_step as ts
-#from tf_agents.trajectories import policy_step
+from tf_agents.trajectories import policy_step
 
 
 
-tf.reset_default_graph()
-var = scipy.special.xlog1py
+#tf.reset_default_graph()
 
 tf.compat.v1.enable_resource_variables()
 tf.compat.v1.enable_v2_behavior()
@@ -57,9 +57,11 @@ class BanditPyEnvironment(py_environment.PyEnvironment):
         return tf.nest.map_structure(lambda x: np.zeros(x.shape, x.dtype), self.observation_spec())
 
     #이 두개는 자식 클래스에서 변경되면 안됨!
+    #_reset 함수는 observation시의 환경을 reset하는 함수. ts.restart로 적혀있는걸 봐서...
     def _reset(self):
         return ts.restart(self._observe(), batch_size=self.batch_size)
 
+    # step 함수는 bandit의 한 번의 행동을 의미하는것 같음. 액션 후 환경에 반영해주는게 없다면, 이건 그냥 액션만을 취하는 함수일수도 있음
     def _step(self, action):
         reward = self._apply_action(action)
         return ts.termination(self._observe(), reward)
@@ -71,7 +73,11 @@ class BanditPyEnvironment(py_environment.PyEnvironment):
 
     @abc.abstractclassmethod
     def _apply_action(self, action):
-        """환경에 액션 부여후 보상 return"""
+        """
+        환경에 액션 부여후 보상 return
+        아니면, 그냥 apply_action이라는 의미대로 액션을 취했을 때 환경을 변경하는 것이라고 할 수도 있을듯
+        """
+
 
 
 """
@@ -109,3 +115,5 @@ action = 2
 print("action: %d" % action)
 reward = environment.step(action).reward
 print("reward: %f" % reward)
+
+test = scipy.special.xlog1py(1, 2)
