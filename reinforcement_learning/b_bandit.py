@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import random
 
 """
 밴딧 문제
@@ -55,58 +56,27 @@ import numpy as np
 
 
 class multi_armed_bandit:
+    bandit_arms = [0.2, 0, -0.2, -2]
+
+    @staticmethod
+    def pull_bandit(one_bandit):
+        result = np.random.randn(1)
+        if result > one_bandit:  # 들어온 값이 정규분포중 하나를 골라낸 값보다 작을 때
+            return 1  # 1점 획득
+        else:  # 아닐 경우
+            return -1  # -1점 획득
+
+
+class multi_armed_agent:
 
     def __init__(self):
-        self.bandit_arms = [0.2, 0, -0.2, 2] #랜덤한 정규분포 수 중 하나보다 값이 크면 1점을 얻으므로, 여기선 4번째 손잡이의 보상이 가장 크다.
-        self.num_bandit_arms = 4
-        self.weights = tf.Variable(tf.ones([self.num_bandit_arms]))
-        self.output = tf.nn.softmax(self.weights)
+        self.model = tf.keras.Sequential([
+            tf.keras.layers.Dense(units=4, activation='relu', input_shape=(4,)),
+            tf.keras.layers.Dense(units=1, activation='softmax')
+        ])
+        self.model.compile()
+        self.model.summary()
 
 
-        self.action_holder = tf.Variable(tf.ones[1])
-
-        self.responsible_output = tf.slice(self.output, self.action_holder, [1])
-        self.loss = -(tf.log(self.responsible_output)*reward_holder)
-
-        self.reward_result = np.zeros(self.num_bandit_arms)
-
-
-    def pullBandit(self, bandit):
-        result = np.random.randn(1)
-        if result < bandit:
-            return 1
-        else:
-            return -1
-
-
-    def training(self):
-        for i in range(1000):
-            actions = tf.nn.softmax(self.weights)
-            a = np.random.choice(actions, p=actions)
-            action = np.argmax(actions == a)
-
-            reward = self.pullBandit(self.bandit_arms[action])
-
-            
-
-
-
-
-if __name__=="__main__":
-
-    test = multi_armed_bandit()
-    print(test.weights, test.output)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main":
+    test = multi_armed_agent()
